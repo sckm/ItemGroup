@@ -26,12 +26,20 @@ android {
 }
 
 dependencies {
+    def mockitoVersion = '2.23.0'
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.kotlinVersion}"
     implementation "com.xwray:groupie:${rootProject.groupieVersion}"
+    implementation "androidx.recyclerview:recyclerview:${rootProject.recyclerViewVersion}"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-android:${mockitoVersion}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation "com.squareup.assertj:assertj-android:1.2.0"
 
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }
