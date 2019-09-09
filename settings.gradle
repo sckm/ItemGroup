@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':item-group'
 rootProject.name = 'ItemGroup'
