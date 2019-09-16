@@ -141,7 +141,7 @@ open class ItemGroup @JvmOverloads constructor(
         diffResult.dispatchUpdatesTo(ReplaceListUpdateCallback(this, startPosition))
     }
 
-    fun update(groups: Collection<Item<*>>) {
+    fun update(groups: Collection<Item<*>>, detectMoves: Boolean = true) {
         val newList = ArrayList(groups)
 
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -160,7 +160,7 @@ open class ItemGroup @JvmOverloads constructor(
                 val newItem = newList[newItemPosition]
                 return newItem == oldItem
             }
-        })
+        }, detectMoves)
 
         super.removeAll()
         children.clear()
