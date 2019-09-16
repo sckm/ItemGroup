@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2019 lisawray
+ * Released under the MIT license
+ * https://opensource.org/licenses/mit-license.php
+ */
+
 package com.github.sckm.itemgroup
 
 import androidx.annotation.CallSuper
