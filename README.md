@@ -1,3 +1,15 @@
+[ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.0.0) ](https://bintray.com/scache/maven/item-group/1.0.0/link)
+
+```
+repositories {
+    maven {
+        url 'https://dl.bintray.com/scache/maven'
+    }
+}
+
+implementation "com.github.sckm:item-group:1.0.0"
+```
+
 # ItemGroup
 `ItemGroup` is `Group` for [Groupie](https://github.com/lisawray/groupie)
 
