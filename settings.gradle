@@ -1,2 +1,2 @@
-include ':example', ':item-group', ':example-benchmark'
+include ':example', ':item-group', ':benchmark'
 rootProject.name = 'ItemGroup'

@@ -1,4 +1,4 @@
-package com.example.example_benchmark
+package com.github.sckm.itemgroup.benchmark
 
 import org.junit.Test
 

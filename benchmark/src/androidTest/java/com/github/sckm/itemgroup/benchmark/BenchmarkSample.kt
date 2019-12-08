@@ -1,4 +1,4 @@
-package com.example.example_benchmark
+package com.github.sckm.itemgroup.benchmark
 
 import android.widget.TextView
 import androidx.benchmark.junit4.BenchmarkRule
