@@ -65,6 +65,34 @@ class ItemGroupBenchmark {
         }
     }
 
+    @Test
+    fun benchmarkItemGroupGetItem() {
+        val items = generateItems()
+        val section = ItemGroup()
+        section.addAll(items)
+
+        benchmarkRule.measureRepeated {
+            (0 until items.size).forEach {
+                section.getItem(it)
+            }
+        }
+    }
+
+
+    @Test
+    fun benchmarkSectionGetItem() {
+        val items = generateItems()
+        val section = Section()
+        section.addAll(items)
+
+        benchmarkRule.measureRepeated {
+            (0 until items.size).forEach {
+                section.getItem(it)
+            }
+        }
+    }
+
+
     private fun generateItems(): List<Item<*>> {
         return (0L..100L).map { id -> BenchmarkItem(Data(id, id.toString())) }
     }
