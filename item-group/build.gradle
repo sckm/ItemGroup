@@ -49,10 +49,13 @@ dependencies {
 
 bintray {
     Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    File localPropertiesFile = project.rootProject.file('local.properties')
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.newDataInputStream())
 
-    user = properties.getProperty('bintrayUser') ?: ""
-    key = properties.getProperty('bintrayKey') ?: ""
+        user = properties.getProperty('bintrayUser') ?: ""
+        key = properties.getProperty('bintrayKey') ?: ""
+    }
 
     group = 'com.github.sckm'
     version = itemGroupVersion
