@@ -14,6 +14,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -558,5 +559,10 @@ class ItemGroupTest {
         item.notifyChanged()
 
         verify(groupAdapter).onItemChanged(group, 0)
+    }
+
+    @Test
+    fun failedTest() {
+        fail()
     }
 }
