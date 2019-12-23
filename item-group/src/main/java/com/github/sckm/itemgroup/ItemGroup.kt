@@ -96,7 +96,7 @@ open class ItemGroup @JvmOverloads constructor(
         val oldItem = children[position]
 
         if (oldItem.isSameAs(item)) {
-            if (oldItem != item) notifyItemChanged(position)
+            if (oldItem != item) notifyItemChanged(position, oldItem.getChangePayload(item))
             return
         }
 
@@ -128,6 +128,12 @@ open class ItemGroup @JvmOverloads constructor(
                 val newItem = items[newItemPosition]
                 return newItem == oldItem
             }
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                val oldItem = oldItems[oldItemPosition]
+                val newItem = items[newItemPosition]
+                return oldItem.getChangePayload(newItem)
+            }
         })
 
         (startPosition until endPosition).forEach { pos ->
@@ -142,23 +148,30 @@ open class ItemGroup @JvmOverloads constructor(
     }
 
     fun update(groups: Collection<Item<*>>, detectMoves: Boolean = true) {
-        val newList = ArrayList(groups)
+        val oldItems = children.toList()
+        val newItems = ArrayList(groups)
 
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = itemCount
+            override fun getOldListSize(): Int = oldItems.size
 
-            override fun getNewListSize(): Int = newList.size
+            override fun getNewListSize(): Int = newItems.size
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = getItem(oldItemPosition)
-                val newItem = newList[newItemPosition]
+                val oldItem = oldItems[oldItemPosition]
+                val newItem = newItems[newItemPosition]
                 return newItem.isSameAs(oldItem)
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = getItem(oldItemPosition)
-                val newItem = newList[newItemPosition]
+                val oldItem = oldItems[oldItemPosition]
+                val newItem = newItems[newItemPosition]
                 return newItem == oldItem
+            }
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                val oldItem = oldItems[oldItemPosition]
+                val newItem = newItems[newItemPosition]
+                return oldItem.getChangePayload(newItem)
             }
         }, detectMoves)
 

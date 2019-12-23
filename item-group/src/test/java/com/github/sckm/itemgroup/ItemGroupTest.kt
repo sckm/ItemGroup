@@ -36,7 +36,11 @@ class AlwaysUpdatingItem(id: Int) : DummyItem(id.toLong()) {
     }
 }
 
-class ContentUpdatingItem(id: Int, val content: String) : DummyItem(id.toLong()) {
+class ContentUpdatingItem(
+    id: Int,
+    val content: String,
+    val payload: Any? = null
+) : DummyItem(id.toLong()) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -49,6 +53,10 @@ class ContentUpdatingItem(id: Int, val content: String) : DummyItem(id.toLong())
 
     override fun hashCode(): Int {
         return content.hashCode()
+    }
+
+    override fun getChangePayload(newItem: Item<*>?): Any? {
+        return payload
     }
 }
 
@@ -296,7 +304,18 @@ class ItemGroupTest {
         section.registerGroupDataObserver(groupAdapter)
 
         section.replace(0, ContentUpdatingItem(0, "after item"))
-        verify(groupAdapter).onItemChanged(section, 0)
+        verify(groupAdapter).onItemChanged(section, 0, null)
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceWithSameItemButContentsIsDifferentNotifiesAdapterChangedWithPayload() {
+        val section = ItemGroup()
+        section.add(ContentUpdatingItem(0, "before item", "old"))
+        section.registerGroupDataObserver(groupAdapter)
+
+        section.replace(0, ContentUpdatingItem(0, "after item", "new"))
+        verify(groupAdapter).onItemChanged(section, 0, "old")
         verifyNoMoreInteractions(groupAdapter)
     }
 
@@ -377,6 +396,29 @@ class ItemGroupTest {
         group.replaceItems(1, 1 + newItems.size, newItems)
 
         verify(groupAdapter).onItemRangeChanged(group, 1, 2, null)
+    }
+
+    @Test
+    fun replaceItemsWithTheSameItemButDifferentContentsNotifiesChangeWithPayload() {
+        val oldItems = listOf(
+            ContentUpdatingItem(1, "contents1", "old1"),
+            ContentUpdatingItem(2, "contents2", "old2"),
+            ContentUpdatingItem(3, "contents3", "old3")
+        )
+
+        val group = ItemGroup()
+        group.update(oldItems)
+        group.registerGroupDataObserver(groupAdapter)
+
+        val newItems = listOf(
+            ContentUpdatingItem(2, "new contents2", "new2"),
+            ContentUpdatingItem(3, "new contents3", "new3")
+        )
+        group.replaceItems(1, 1 + newItems.size, newItems)
+
+        verify(groupAdapter).onItemRangeChanged(group, 1, 1, "old2")
+        verify(groupAdapter).onItemRangeChanged(group, 2, 1, "old3")
+        verifyNoMoreInteractions(groupAdapter)
     }
 
     @Test
@@ -487,6 +529,31 @@ class ItemGroupTest {
     }
 
     @Test
+    fun updateGroupChangesRangeWithPayload() {
+        val oldChildren = mutableListOf<Item<*>>(
+            ContentUpdatingItem(1, "old content1", "old1"),
+            ContentUpdatingItem(2, "old content2", "old2")
+        )
+
+        val newChildren = mutableListOf<Item<*>>(
+            ContentUpdatingItem(1, "new content1", "new1"),
+            ContentUpdatingItem(2, "new content2", "new2")
+        )
+
+        val group = ItemGroup()
+        group.registerGroupDataObserver(groupAdapter)
+
+        group.update(oldChildren)
+        verify(groupAdapter).onItemRangeInserted(group, 0, 2)
+        verifyNoMoreInteractions(groupAdapter)
+
+        group.update(newChildren)
+        verify(groupAdapter).onItemRangeChanged(group, 0, 1, "old1")
+        verify(groupAdapter).onItemRangeChanged(group, 1, 1, "old2")
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
     fun updateWithTheSameItemAndSameContentsDoesNotNotifyChange() {
         val item = ContentUpdatingItem(1, "contents")
         val children = listOf<Item<*>>(item)
@@ -512,6 +579,21 @@ class ItemGroupTest {
         group.update(listOf(newItem))
 
         verify(groupAdapter).onItemRangeChanged(group, 0, 1, null)
+    }
+
+    @Test
+    fun updateWithTheSameItemButDifferentContentsNotifiesChangeWithPayload() {
+        val oldItem = ContentUpdatingItem(1, "contents", "old")
+
+        val group = ItemGroup()
+        group.update(listOf(oldItem))
+        group.registerGroupDataObserver(groupAdapter)
+
+        val newItem = ContentUpdatingItem(1, "new contents", "new")
+        group.update(listOf(newItem))
+
+        verify(groupAdapter).onItemRangeChanged(group, 0, 1, "old")
+        verifyNoMoreInteractions(groupAdapter)
     }
 
     @Test
