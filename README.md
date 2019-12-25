@@ -14,7 +14,7 @@ Some methods(getItem, update,...) cost is lower than `Section`'s one.
 Below are benchmark result for reference:(Tests are run on Pixel 3 XL)  
 [Benchmark tests code](https://github.com/sckm/ItemGroup/blob/master/benchmark/src/androidTest/java/com/github/sckm/itemgroup/benchmark/ItemGroupBenchmark.kt)
 
-### update with 100 shufflued items
+### update with 100 shuffled items
 class | time(micro sec)
 :--:|:--:
 ItemGroup | 1,039
