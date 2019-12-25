@@ -6,8 +6,6 @@ buildscript {
     ext.sdkVersion = 28
     ext.minimumSdkVersion = 14
     ext.buildToolsVersion = '28.0.3'
-    ext.groupieVersion = '2.2.0'
-    ext.recyclerViewVersion = '1,0.0'
 
     repositories {
         google()
