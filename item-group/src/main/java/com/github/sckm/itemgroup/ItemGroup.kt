@@ -108,8 +108,15 @@ open class ItemGroup @JvmOverloads constructor(
      * replace items at given range with the new items.
      * @param startPosition start position(inclusive)
      * @param endPosition end position(exclusive)
+     * @param items new items
+     * @param detectMoves true if detect moved items, false otherwise
      */
-    fun replaceItems(startPosition: Int, endPosition: Int, items: List<Item<*>>) {
+    fun replaceItems(
+        startPosition: Int,
+        endPosition: Int,
+        items: List<Item<*>>,
+        detectMoves: Boolean = true
+    ) {
         val oldItems = children.slice(startPosition until endPosition)
 
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -134,7 +141,7 @@ open class ItemGroup @JvmOverloads constructor(
                 val newItem = items[newItemPosition]
                 return oldItem.getChangePayload(newItem)
             }
-        })
+        }, detectMoves)
 
         (startPosition until endPosition).forEach { pos ->
             super.remove(children[startPosition])
