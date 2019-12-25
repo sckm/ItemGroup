@@ -19,61 +19,58 @@ class ItemGroupBenchmark {
 
     @Test
     fun benchmarkItemGroupUpdateShuffled() {
-        val items = generateItems()
-        val shuffledItems = items.shuffled()
-
         benchmarkRule.measureRepeated {
-            val itemGroup = ItemGroup()
-            itemGroup.addAll(items)
-            itemGroup.update(shuffledItems)
+            val (source, shuffled) = runWithTimingDisabled { generateItems() to generateItems().shuffled() }
+            val itemGroup = runWithTimingDisabled {
+                ItemGroup().also { it.addAll(source) }
+            }
+            itemGroup.update(shuffled)
         }
     }
 
     @Test
     fun benchmarkItemGroupUpdateNoChanged() {
-        val items1 = generateItems()
-        val items2 = generateItems()
-
         benchmarkRule.measureRepeated {
-            val itemGroup = ItemGroup()
-            itemGroup.addAll(items1)
+            val (items1, items2) = runWithTimingDisabled { generateItems() to generateItems() }
+            val itemGroup = runWithTimingDisabled {
+                ItemGroup().also { it.addAll(items1) }
+            }
             itemGroup.update(items2)
         }
     }
 
     @Test
     fun benchmarkSectionUpdateShuffled() {
-        val items = generateItems()
-        val shuffledItems = items.shuffled()
-
         benchmarkRule.measureRepeated {
-            val section = Section()
-            section.addAll(items)
-            section.update(shuffledItems)
+            val (source, shuffled) = runWithTimingDisabled { generateItems() to generateItems().shuffled() }
+            val section = runWithTimingDisabled {
+                Section().also { it.addAll(source) }
+            }
+            section.update(shuffled)
         }
     }
 
     @Test
     fun benchmarkSectionUpdateNoChanged() {
-        val items1 = generateItems()
-        val items2 = generateItems()
-
         benchmarkRule.measureRepeated {
-            val section = Section()
-            section.addAll(items1)
+            val (items1, items2) = runWithTimingDisabled { generateItems() to generateItems() }
+            val section = runWithTimingDisabled {
+                Section().also { it.addAll(items1) }
+            }
             section.update(items2)
         }
     }
 
     @Test
     fun benchmarkItemGroupGetItem() {
-        val items = generateItems()
-        val section = ItemGroup()
-        section.addAll(items)
-
         benchmarkRule.measureRepeated {
+            val items = runWithTimingDisabled { generateItems() }
+            val itemGroup = runWithTimingDisabled {
+                ItemGroup().also { it.addAll(items) }
+            }
+
             (0 until items.size).forEach {
-                section.getItem(it)
+                itemGroup.getItem(it)
             }
         }
     }
@@ -81,11 +78,12 @@ class ItemGroupBenchmark {
 
     @Test
     fun benchmarkSectionGetItem() {
-        val items = generateItems()
-        val section = Section()
-        section.addAll(items)
-
         benchmarkRule.measureRepeated {
+            val items = runWithTimingDisabled { generateItems() }
+            val section = runWithTimingDisabled {
+                Section().also { it.addAll(items) }
+            }
+
             (0 until items.size).forEach {
                 section.getItem(it)
             }
