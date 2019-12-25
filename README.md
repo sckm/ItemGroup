@@ -26,6 +26,11 @@ class | time(micro sec)
 ItemGroup | 31
 Section | 722
 
+## Compatibility with Groupie
+ItemGroup version | Groupie version
+:--:|:--:
+1.1.0 ~ 1.1.1 | 2.2.0 ~ 2.5.1
+TODO | 2.6.0 ~
 
 
 
