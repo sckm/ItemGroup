@@ -10,8 +10,8 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicLong
 
 private val ID_COUNTER = AtomicLong(0)
 
-open class DummyItem(id: Long = ID_COUNTER.decrementAndGet()) : Item<ViewHolder>(id) {
+open class DummyItem(id: Long = ID_COUNTER.decrementAndGet()) : Item<GroupieViewHolder>(id) {
     override fun getLayout(): Int = 0
 
-    override fun bind(viewHolder: ViewHolder, position: Int) = Unit
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) = Unit
 }
 
 class AlwaysUpdatingItem(id: Int) : DummyItem(id.toLong()) {
@@ -64,7 +64,7 @@ class ContentUpdatingItem(
 class ItemGroupTest {
 
     @Mock
-    lateinit var groupAdapter: GroupAdapter<ViewHolder>
+    lateinit var groupAdapter: GroupAdapter<GroupieViewHolder>
     @get:Rule
     val mockitoRule = MockitoJUnit.rule()!!
 
@@ -231,7 +231,7 @@ class ItemGroupTest {
     fun addAllWorksWithSets() {
         val testSection = ItemGroup()
 
-        val itemSet = mutableSetOf<Item<ViewHolder>>()
+        val itemSet = mutableSetOf<Item<GroupieViewHolder>>()
         itemSet.add(DummyItem())
         itemSet.add(DummyItem())
 
