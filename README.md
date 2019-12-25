@@ -1,7 +1,10 @@
 [ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.1.1) ](https://bintray.com/scache/maven/item-group/1.1.1/link)
 
 ```
-implementation "com.github.sckm:item-group:1.1.1"
+implementation("com.github.sckm:item-group:1.1.0") {
+   exclude group: 'com.xwray', module: 'groupie'
+   exclude group: 'androidx.recyclerview', module: 'recyclerview'
+}
 ```
 
 # ItemGroup
