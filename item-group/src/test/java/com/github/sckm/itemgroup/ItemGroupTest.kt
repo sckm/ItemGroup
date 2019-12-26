@@ -60,6 +60,35 @@ class ContentUpdatingItem(
     }
 }
 
+class HasSameContentUpdatingItem(
+    id: Int,
+    val content: String,
+    val payload: Any? = null
+) : DummyItem(id.toLong()) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        val that = other as HasSameContentUpdatingItem? ?: return false
+
+        return content == that.content
+    }
+
+    override fun hashCode(): Int {
+        return content.hashCode()
+    }
+
+    override fun hasSameContentAs(other: Item<*>?): Boolean {
+        return this === other
+    }
+
+    override fun getChangePayload(newItem: Item<*>?): Any? {
+        return payload
+    }
+}
+
+
 @RunWith(JUnit4::class)
 class ItemGroupTest {
 
@@ -330,6 +359,31 @@ class ItemGroupTest {
     }
 
     @Test
+    fun replaceWithSameContentAsUsesHasSameContentAsNotNotifiesAdapter() {
+        val section = ItemGroup()
+        val item = HasSameContentUpdatingItem(0, "item")
+        section.add(item)
+        section.registerGroupDataObserver(groupAdapter)
+
+        section.replace(0, item)
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceWithNotSameContentAsUsesHasSameContentAsNotNotifiesAdapter() {
+        val section = ItemGroup()
+        val item1 = HasSameContentUpdatingItem(0, "item")
+        val item2 = HasSameContentUpdatingItem(0, "item")
+        section.add(item1)
+        section.registerGroupDataObserver(groupAdapter)
+
+        section.replace(0, item2)
+
+        verify(groupAdapter).onItemChanged(section, 0, null)
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
     fun replaceWithDifferentItemNotifiesAdapterRemoveAndInsert() {
         val section = ItemGroup()
         section.add(ContentUpdatingItem(0, "item"))
@@ -568,6 +622,19 @@ class ItemGroupTest {
     }
 
     @Test
+    fun updateWithTheSameItemAndSameContentsAsUsesHasSameContentAsDoesNotNotifyChange() {
+        val item = HasSameContentUpdatingItem(1, "contents")
+
+        val group = ItemGroup()
+        group.update(listOf(item))
+        group.registerGroupDataObserver(groupAdapter)
+
+        group.update(listOf(item))
+
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
     fun updateWithTheSameItemButDifferentContentsNotifiesChange() {
         val oldItem = ContentUpdatingItem(1, "contents")
 
@@ -593,6 +660,21 @@ class ItemGroupTest {
         group.update(listOf(newItem))
 
         verify(groupAdapter).onItemRangeChanged(group, 0, 1, "old")
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun updateWithTheSameItemButDifferentContentsAsUsesHasSameContentAsNotifiesChange() {
+        val oldItem = HasSameContentUpdatingItem(1, "contents")
+
+        val group = ItemGroup()
+        group.update(listOf(oldItem))
+        group.registerGroupDataObserver(groupAdapter)
+
+        val newItem = HasSameContentUpdatingItem(1, "contents")
+        group.update(listOf(newItem))
+
+        verify(groupAdapter).onItemRangeChanged(group, 0, 1, null)
         verifyNoMoreInteractions(groupAdapter)
     }
 
