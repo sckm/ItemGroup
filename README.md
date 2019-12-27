@@ -11,8 +11,17 @@ implementation("com.github.sckm:item-group:1.2.0") {
 # ItemGroup
 `ItemGroup` is `Group` for [Groupie](https://github.com/lisawray/groupie)
 
-`ItemGroup` is like `Section` and optimize performance for `Group` that contains only `Item`.  
-Some methods(getItem, update,...) cost is lower than `Section`'s one.
+`ItemGroup` is like `Section` and improves performance for `Group` that contains only `Item`.  
+It is cheaper to invoke methods on a `ItemGroup`  than a `Section`.
+
+``` UpdateExample.kt
+val itemGroup = ItemGroup()
+val items = mutableListOf<Item<*>>()
+items += MyItem1()
+items += MyItem2()
+
+itemGroup.update(items)
+```
 
 ## Benchmark
 Below are benchmark result for reference:(Tests are run on Pixel 3 XL)  
