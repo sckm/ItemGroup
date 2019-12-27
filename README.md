@@ -15,7 +15,10 @@ implementation("com.github.sckm:item-group:1.2.0") {
 It is cheaper to invoke methods on a `ItemGroup`  than a `Section`.
 
 ``` UpdateExample.kt
+val groupAdapter = GroupAdapter<GroupieViewHolder>()
 val itemGroup = ItemGroup()
+groupAdapter.add(itemGroup)
+
 val items = mutableListOf<Item<*>>()
 items += MyItem1()
 items += MyItem2()
