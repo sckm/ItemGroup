@@ -185,7 +185,6 @@ open class ItemGroup @JvmOverloads constructor(
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
-//            return newItem==oldItem
             return newItem.hasSameContentAs(oldItem)
         }
 
