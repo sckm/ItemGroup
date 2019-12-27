@@ -1,4 +1,5 @@
 [ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.2.0) ](https://bintray.com/scache/maven/item-group/1.2.0/link)
+![](https://github.com/sckm/ItemGroup/workflows/Android%20CI/badge.svg)
 
 ```
 implementation("com.github.sckm:item-group:1.2.0") {
