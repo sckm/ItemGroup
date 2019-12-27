@@ -96,7 +96,9 @@ open class ItemGroup @JvmOverloads constructor(
         val oldItem = children[position]
 
         if (oldItem.isSameAs(item)) {
-            if (oldItem != item) notifyItemChanged(position, oldItem.getChangePayload(item))
+            if (!oldItem.hasSameContentAs(item)) {
+                notifyItemChanged(position, oldItem.getChangePayload(item))
+            }
             return
         }
 
@@ -119,29 +121,7 @@ open class ItemGroup @JvmOverloads constructor(
     ) {
         val oldItems = children.slice(startPosition until endPosition)
 
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = oldItems.size
-
-            override fun getNewListSize(): Int = items.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = items[newItemPosition]
-                return newItem.isSameAs(oldItem)
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = items[newItemPosition]
-                return newItem == oldItem
-            }
-
-            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = items[newItemPosition]
-                return oldItem.getChangePayload(newItem)
-            }
-        }, detectMoves)
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, items), detectMoves)
 
         (startPosition until endPosition).forEach { pos ->
             super.remove(children[startPosition])
@@ -158,29 +138,7 @@ open class ItemGroup @JvmOverloads constructor(
         val oldItems = children.toList()
         val newItems = ArrayList(groups)
 
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = oldItems.size
-
-            override fun getNewListSize(): Int = newItems.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = newItems[newItemPosition]
-                return newItem.isSameAs(oldItem)
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = newItems[newItemPosition]
-                return newItem == oldItem
-            }
-
-            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-                val oldItem = oldItems[oldItemPosition]
-                val newItem = newItems[newItemPosition]
-                return oldItem.getChangePayload(newItem)
-            }
-        }, detectMoves)
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, newItems), detectMoves)
 
         super.removeAll()
         children.clear()
@@ -207,6 +165,33 @@ open class ItemGroup @JvmOverloads constructor(
 
         override fun onChanged(position: Int, count: Int, payload: Any?) {
             baseGroup.notifyItemRangeChanged(offset + position, count, payload)
+        }
+    }
+
+    private class DiffCallback(
+        private val oldItems: List<Item<*>>,
+        private val newItems: List<Item<*>>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldItems.size
+
+        override fun getNewListSize(): Int = newItems.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return newItem.isSameAs(oldItem)
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return newItem.hasSameContentAs(oldItem)
+        }
+
+        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+            return oldItem.getChangePayload(newItem)
         }
     }
 }

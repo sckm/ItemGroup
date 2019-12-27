@@ -53,7 +53,7 @@ class UpdateActivity : AppCompatActivity() {
     }
 
     private fun setupGroupieItems() {
-        val groupAdapter = GroupAdapter<ViewHolder>().apply {
+        val groupAdapter = GroupAdapter<GroupieViewHolder>().apply {
             val group: Group = if (useItemGroup) {
                 val itemGroup = ItemGroup()
                 itemGroup.add(GridItemsHeader("shuffle items"))

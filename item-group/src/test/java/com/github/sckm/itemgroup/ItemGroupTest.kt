@@ -10,8 +10,8 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicLong
 
 private val ID_COUNTER = AtomicLong(0)
 
-open class DummyItem(id: Long = ID_COUNTER.decrementAndGet()) : Item<ViewHolder>(id) {
+open class DummyItem(id: Long = ID_COUNTER.decrementAndGet()) : Item<GroupieViewHolder>(id) {
     override fun getLayout(): Int = 0
 
-    override fun bind(viewHolder: ViewHolder, position: Int) = Unit
+    override fun bind(viewHolder: GroupieViewHolder, position: Int) = Unit
 }
 
 class AlwaysUpdatingItem(id: Int) : DummyItem(id.toLong()) {
@@ -60,11 +60,40 @@ class ContentUpdatingItem(
     }
 }
 
+class HasSameContentUpdatingItem(
+    id: Int,
+    val content: String,
+    val payload: Any? = null
+) : DummyItem(id.toLong()) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        val that = other as HasSameContentUpdatingItem? ?: return false
+
+        return content == that.content
+    }
+
+    override fun hashCode(): Int {
+        return content.hashCode()
+    }
+
+    override fun hasSameContentAs(other: Item<*>?): Boolean {
+        return this === other
+    }
+
+    override fun getChangePayload(newItem: Item<*>?): Any? {
+        return payload
+    }
+}
+
+
 @RunWith(JUnit4::class)
 class ItemGroupTest {
 
     @Mock
-    lateinit var groupAdapter: GroupAdapter<ViewHolder>
+    lateinit var groupAdapter: GroupAdapter<GroupieViewHolder>
     @get:Rule
     val mockitoRule = MockitoJUnit.rule()!!
 
@@ -231,7 +260,7 @@ class ItemGroupTest {
     fun addAllWorksWithSets() {
         val testSection = ItemGroup()
 
-        val itemSet = mutableSetOf<Item<ViewHolder>>()
+        val itemSet = mutableSetOf<Item<GroupieViewHolder>>()
         itemSet.add(DummyItem())
         itemSet.add(DummyItem())
 
@@ -326,6 +355,31 @@ class ItemGroupTest {
         section.registerGroupDataObserver(groupAdapter)
 
         section.replace(0, ContentUpdatingItem(0, "item"))
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceWithSameContentAsUsesHasSameContentAsNotNotifiesAdapter() {
+        val section = ItemGroup()
+        val item = HasSameContentUpdatingItem(0, "item")
+        section.add(item)
+        section.registerGroupDataObserver(groupAdapter)
+
+        section.replace(0, item)
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceWithNotSameContentAsUsesHasSameContentAsNotNotifiesAdapter() {
+        val section = ItemGroup()
+        val item1 = HasSameContentUpdatingItem(0, "item")
+        val item2 = HasSameContentUpdatingItem(0, "item")
+        section.add(item1)
+        section.registerGroupDataObserver(groupAdapter)
+
+        section.replace(0, item2)
+
+        verify(groupAdapter).onItemChanged(section, 0, null)
         verifyNoMoreInteractions(groupAdapter)
     }
 
@@ -568,6 +622,19 @@ class ItemGroupTest {
     }
 
     @Test
+    fun updateWithTheSameItemAndSameContentsAsUsesHasSameContentAsDoesNotNotifyChange() {
+        val item = HasSameContentUpdatingItem(1, "contents")
+
+        val group = ItemGroup()
+        group.update(listOf(item))
+        group.registerGroupDataObserver(groupAdapter)
+
+        group.update(listOf(item))
+
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
     fun updateWithTheSameItemButDifferentContentsNotifiesChange() {
         val oldItem = ContentUpdatingItem(1, "contents")
 
@@ -593,6 +660,21 @@ class ItemGroupTest {
         group.update(listOf(newItem))
 
         verify(groupAdapter).onItemRangeChanged(group, 0, 1, "old")
+        verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun updateWithTheSameItemButDifferentContentsAsUsesHasSameContentAsNotifiesChange() {
+        val oldItem = HasSameContentUpdatingItem(1, "contents")
+
+        val group = ItemGroup()
+        group.update(listOf(oldItem))
+        group.registerGroupDataObserver(groupAdapter)
+
+        val newItem = HasSameContentUpdatingItem(1, "contents")
+        group.update(listOf(newItem))
+
+        verify(groupAdapter).onItemRangeChanged(group, 0, 1, null)
         verifyNoMoreInteractions(groupAdapter)
     }
 
