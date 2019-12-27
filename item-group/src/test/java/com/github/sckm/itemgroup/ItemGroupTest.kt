@@ -55,7 +55,7 @@ class ContentUpdatingItem(
         return content.hashCode()
     }
 
-    override fun getChangePayload(newItem: Item<*>?): Any? {
+    override fun getChangePayload(newItem: Item<*>): Any? {
         return payload
     }
 }
@@ -79,11 +79,11 @@ class HasSameContentUpdatingItem(
         return content.hashCode()
     }
 
-    override fun hasSameContentAs(other: Item<*>?): Boolean {
+    override fun hasSameContentAs(other: Item<*>): Boolean {
         return this === other
     }
 
-    override fun getChangePayload(newItem: Item<*>?): Any? {
+    override fun getChangePayload(newItem: Item<*>): Any? {
         return payload
     }
 }
