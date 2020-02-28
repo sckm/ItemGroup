@@ -1,7 +1,7 @@
-[ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.1.0) ](https://bintray.com/scache/maven/item-group/1.1.0/link)
+[ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.1.1) ](https://bintray.com/scache/maven/item-group/1.1.1/link)
 
 ```
-implementation "com.github.sckm:item-group:1.1.0"
+implementation "com.github.sckm:item-group:1.1.1"
 ```
 
 # ItemGroup
