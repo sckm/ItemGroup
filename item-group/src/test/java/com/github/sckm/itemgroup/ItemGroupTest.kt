@@ -327,6 +327,21 @@ class ItemGroupTest {
     }
 
     @Test
+    fun replaceWithSameItemButContentsIsDifferentReplaceItemInstance() {
+        val section = ItemGroup()
+        val oldItem = ContentUpdatingItem(0, "before item")
+        section.add(oldItem)
+        section.registerGroupDataObserver(groupAdapter)
+
+        val newItem = ContentUpdatingItem(0, "after item")
+        section.replace(0, newItem)
+
+        assertThat(section.itemCount).isEqualTo(1)
+        assertThat(section.getItem(0) === oldItem).isFalse()
+        assertThat(section.getItem(0) === newItem).isTrue()
+    }
+
+    @Test
     fun replaceWithSameItemButContentsIsDifferentNotifiesAdapterChanged() {
         val section = ItemGroup()
         section.add(ContentUpdatingItem(0, "before item"))
@@ -346,6 +361,21 @@ class ItemGroupTest {
         section.replace(0, ContentUpdatingItem(0, "after item", "new"))
         verify(groupAdapter).onItemChanged(section, 0, "old")
         verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceWithSameContentsReplaceItemInstance() {
+        val section = ItemGroup()
+        val oldItem = ContentUpdatingItem(0, "item")
+        section.add(oldItem)
+        section.registerGroupDataObserver(groupAdapter)
+
+        val newItem = ContentUpdatingItem(0, "item")
+        section.replace(0, newItem)
+
+        assertThat(section.itemCount).isEqualTo(1)
+        assertThat(section.getItem(0) === oldItem).isFalse()
+        assertThat(section.getItem(0) === newItem).isTrue()
     }
 
     @Test
@@ -416,6 +446,26 @@ class ItemGroupTest {
     }
 
     @Test
+    fun replaceItemsWithTheSameItemAndSameContentsReplaceInstances() {
+        val oldChildren = listOf<Item<*>>(
+            ContentUpdatingItem(1, "contents"),
+            ContentUpdatingItem(2, "contents")
+        )
+        val group = ItemGroup()
+        group.update(oldChildren)
+
+        val newChildren = listOf<Item<*>>(
+            ContentUpdatingItem(1, "contents"),
+            ContentUpdatingItem(2, "contents")
+        )
+        group.replaceItems(0, newChildren.size, newChildren)
+
+        assertThat(group.itemCount).isEqualTo(2)
+        assertThat(group.getItem(0) === newChildren[0]).isTrue()
+        assertThat(group.getItem(1) === newChildren[1]).isTrue()
+    }
+
+    @Test
     fun replaceItemsWithTheSameItemAndSameContentsDoesNotNotifyChange() {
         val children = listOf<Item<*>>(
             ContentUpdatingItem(1, "contents"),
@@ -473,6 +523,28 @@ class ItemGroupTest {
         verify(groupAdapter).onItemRangeChanged(group, 1, 1, "old2")
         verify(groupAdapter).onItemRangeChanged(group, 2, 1, "old3")
         verifyNoMoreInteractions(groupAdapter)
+    }
+
+    @Test
+    fun replaceItemsWithADifferentItemReplaceItemInstances() {
+        val oldItems = listOf(
+            ContentUpdatingItem(1, "contents"),
+            ContentUpdatingItem(2, "contents"),
+            ContentUpdatingItem(3, "contents")
+        )
+
+        val group = ItemGroup()
+        group.update(oldItems)
+
+        val newItems = listOf(
+            ContentUpdatingItem(4, "contents"),
+            ContentUpdatingItem(5, "contents")
+        )
+        group.replaceItems(1, 1 + newItems.size, newItems)
+
+        assertThat(group.itemCount).isEqualTo(3)
+        assertThat(group.getItem(1) === newItems[0]).isTrue()
+        assertThat(group.getItem(2) === newItems[1]).isTrue()
     }
 
     @Test
