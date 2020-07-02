@@ -33,7 +33,7 @@ Section | 722
 ItemGroup version | Groupie version
 :--:|:--:
 1.1.0 ~ 1.1.1 | 2.2.0 ~ 2.5.1
-TODO | 2.6.0 ~
+1.2.1 | 2.6.0 ~
 
 
 
