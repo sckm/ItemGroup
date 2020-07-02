@@ -1,15 +1,15 @@
-[ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.2.0) ](https://bintray.com/scache/maven/item-group/1.2.0/link)
+[ ![Download](https://api.bintray.com/packages/scache/maven/item-group/images/download.svg?version=1.2.1) ](https://bintray.com/scache/maven/item-group/1.2.1/link)
 ![](https://github.com/sckm/ItemGroup/workflows/Android%20CI/badge.svg)
 
 ```
-implementation("com.github.sckm:item-group:1.2.0") {
+implementation("com.github.sckm:item-group:1.2.1") {
    exclude group: 'com.xwray', module: 'groupie'
    exclude group: 'androidx.recyclerview', module: 'recyclerview'
 }
 ```
 
 # ItemGroup
-`ItemGroup` is `Group` for [Groupie](https://github.com/lisawray/groupie)
+`ItemGroup` is class that implements `Group` of [Groupie](https://github.com/lisawray/groupie)
 
 `ItemGroup` is like `Section` and improves performance for `Group` that contains only `Item`.  
 It is cheaper to invoke methods on a `ItemGroup`  than a `Section`.
@@ -42,10 +42,10 @@ class | time(micro sec)
 ItemGroup | 31
 Section | 722
 
-## Compatibility with Groupie
+## Compatibility
 ItemGroup version | Groupie version
 :--:|:--:
-1.1.0 ~ 1.1.1 | 2.2.0 ~ 2.5.1
+1.1.2 | 2.2.0 ~ 2.5.1
 1.2.1 | 2.6.0 ~
 
 
