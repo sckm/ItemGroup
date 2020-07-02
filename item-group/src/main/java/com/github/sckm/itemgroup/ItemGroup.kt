@@ -94,6 +94,7 @@ open class ItemGroup @JvmOverloads constructor(
 
     fun replace(position: Int, item: Item<*>) {
         val oldItem = children[position]
+        children[position] = item
 
         if (oldItem.isSameAs(item)) {
             if (!oldItem.hasSameContentAs(item)) {
