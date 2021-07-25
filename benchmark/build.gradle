@@ -39,7 +39,7 @@ dependencies {
     androidTestImplementation "androidx.test:rules:$androidxTestRulesVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxTestExtJunitVersion"
 
-    androidTestImplementation "com.xwray:groupie:${rootProject.groupieVersion}"
+    androidTestImplementation "com.github.lisawray.groupie:groupie:${rootProject.groupieVersion}"
     androidTestImplementation "androidx.appcompat:appcompat:1.1.0"
     androidTestImplementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     androidTestImplementation "androidx.core:core-ktx:$androidxCoreKtxVersion"
