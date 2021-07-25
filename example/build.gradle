@@ -25,7 +25,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(':item-group')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "com.xwray:groupie:${rootProject.groupieVersion}"
+    implementation "com.github.lisawray.groupie:groupie:${rootProject.groupieVersion}"
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     implementation "androidx.core:core-ktx:$androidxCoreKtxVersion"
