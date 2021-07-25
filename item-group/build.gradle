@@ -33,7 +33,7 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${rootProject.kotlinVersion}"
-    implementation "com.xwray:groupie:${rootProject.groupieVersion}"
+    implementation "com.github.lisawray.groupie:groupie:${rootProject.groupieVersion}"
     implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
 
     testImplementation 'junit:junit:4.12'
