@@ -1,5 +1,5 @@
 ```
-implementation "com.github.sckm:item-group:1.1.3"
+implementation "io.github.sckm:item-group:1.1.3"
 ```
 
 # ItemGroup
