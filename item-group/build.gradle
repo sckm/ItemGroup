@@ -1,9 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'org.jetbrains.dokka-android'
 
 android {
     compileSdkVersion rootProject.sdkVersion
@@ -47,80 +44,4 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoCoreVersion"
 }
 
-bintray {
-    Properties properties = new Properties()
-    File localPropertiesFile = project.rootProject.file('local.properties')
-    if (localPropertiesFile.exists()) {
-        properties.load(localPropertiesFile.newDataInputStream())
-
-        user = properties.getProperty('bintrayUser') ?: ""
-        key = properties.getProperty('bintrayKey') ?: ""
-    }
-
-    group = 'com.github.sckm'
-    version = itemGroupVersion
-    configurations = ['archives']
-
-    pkg {
-        repo = 'maven'
-        userOrg = 'scache'
-        name = 'item-group'
-        vcsUrl = 'https://github.com/sckm/ItemGroup.git'
-        licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/sckm/ItemGroup'
-        version {
-            name = itemGroupVersion
-            desc = 'item group for Groupie'
-        }
-    }
-}
-
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-                name 'item-group'
-                url 'https://github.com/sckm/ItemGroup'
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'scache'
-                        name 'scache'
-                        email 'scal.che+dev@gmail.com'
-                    }
-                }
-                scm {
-                    connection 'https://github.com/sckm'
-                    developerConnection 'https://github.com/sckm'
-                    url 'https://github.com/sckm'
-                }
-            }
-        }
-    }
-}
-
-dokka {
-    outputFormat = 'html'
-    outputDirectory = "$buildDir/documentation"
-}
-
-task dokkaJar(type: Jar, dependsOn: dokka) {
-    classifier = 'javadoc'
-    from dokka.outputDirectory
-}
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-artifacts {
-    archives dokkaJar
-    archives sourcesJar
-}
+apply from: '../publish.gradle'

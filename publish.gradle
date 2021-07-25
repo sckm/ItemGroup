@@ -1,0 +1,77 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka-android'
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = findProperty('mavenRepo') ?: "${buildDir}/repo"
+                if (URI.create(url as String).getHost() == 's01.oss.sonatype.org') {
+                    File localPropertiesFile = project.rootProject.file('local.properties')
+                    if (localPropertiesFile.exists()) {
+                        Properties properties = new Properties()
+                        properties.load(localPropertiesFile.newDataInputStream())
+                        credentials {
+                            username = properties.getProperty('sonatypeUser') ?: ""
+                            password = properties.getProperty('sonatypePassword') ?: ""
+                        }
+                    }
+                }
+            }
+        }
+        publications {
+            release(MavenPublication) {
+                def itemGroupArtifactId = 'item-group'
+                from components.release
+                artifact sourcesJar
+                artifact dokkaJar
+                groupId = 'io.github.sckm'
+                artifactId = itemGroupArtifactId
+                version itemGroupVersion
+                pom {
+                    name = itemGroupArtifactId
+                    description = 'ItemGroup is a library to improve the performance of Groupie'
+                    url = 'https://github.com/sckm'
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'scache'
+                            name = 'scache'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/sckm'
+                        developerConnection = 'https://github.com/sckm'
+                        url = 'https://github.com/sckm'
+                    }
+                }
+            }
+        }
+        signing {
+            sign publishing.publications.release
+        }
+    }
+}
+tasks.withType(PublishToMavenRepository) { it.dependsOn lint, test }
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/documentation"
+}
+
+task dokkaJar(type: Jar, dependsOn: dokka) {
+    archiveClassifier.set('javadoc')
+    from dokka.outputDirectory
+}
